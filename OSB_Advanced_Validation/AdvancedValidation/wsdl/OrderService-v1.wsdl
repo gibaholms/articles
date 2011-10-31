@@ -1,0 +1,105 @@
+<wsdl:definitions targetNamespace="http://gibaholms.wordpress.com/samples/wsdl/Order-v1"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://gibaholms.wordpress.com/samples/wsdl/Order-v1"
+	xmlns:v1_0="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<wsdl:types>
+		<xsd:schema elementFormDefault="qualified"
+			targetNamespace="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0"
+			xmlns:tns="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0">
+			<xsd:complexType name="Fault">
+				<xsd:sequence>
+					<xsd:element name="message" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="OrderRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Customer">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="FirstName" type="xsd:string" minOccurs="0" />
+									<xsd:element name="LastName" type="xsd:string" minOccurs="0" />
+									<xsd:element name="DocumentNumber" type="xsd:string" minOccurs="0" />
+									<xsd:element name="Email" type="xsd:string" minOccurs="0" />
+									<xsd:element name="Age" type="xsd:int" minOccurs="0"/>
+									<xsd:element name="Password" type="xsd:string" minOccurs="0" />
+									<xsd:element name="PasswordConfirmation" type="xsd:string" minOccurs="0" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="Product">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="ProductID" type="xsd:string" minOccurs="0" />
+									<xsd:element name="ProductRestriction" minOccurs="0">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="EVERYONE"/>
+												<xsd:enumeration value="OVER18"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:element>
+									<xsd:element name="Quantity" type="xsd:int" minOccurs="0" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="OrderResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="TransactionID" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="OrderBusinessFault" type="tns:Fault" />
+			<xsd:element name="OrderTechnicalFault" type="tns:Fault" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="OrderRequest">
+		<wsdl:part name="OrderRequest" element="v1_0:OrderRequest" />
+	</wsdl:message>
+	<wsdl:message name="OrderResponse">
+		<wsdl:part name="OrderResponse" element="v1_0:OrderResponse" />
+	</wsdl:message>
+	<wsdl:message name="OrderBusinessFault">
+		<wsdl:part name="OrderBusinessFault" element="v1_0:OrderBusinessFault" />
+	</wsdl:message>
+	<wsdl:message name="OrderTechnicalFault">
+		<wsdl:part name="OrderTechnicalFault" element="v1_0:OrderTechnicalFault" />
+	</wsdl:message>
+	<wsdl:portType name="OrderPortType_v1_0">
+		<wsdl:operation name="execute">
+			<wsdl:input message="tns:OrderRequest" />
+			<wsdl:output message="tns:OrderResponse" />
+			<wsdl:fault name="OrderBusinessFault" message="tns:OrderBusinessFault" />
+			<wsdl:fault name="OrderTechnicalFault" message="tns:OrderTechnicalFault" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="OrderBinding_v1_0" type="tns:OrderPortType_v1_0">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="execute">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="OrderBusinessFault">
+				<soap:fault name="OrderBusinessFault" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="OrderTechnicalFault">
+				<soap:fault name="OrderTechnicalFault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="OrderService_v1_0">
+		<wsdl:port name="OrderPort" binding="tns:OrderBinding_v1_0">
+			<soap:address
+				location="http://localhost:8011/OrderService" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

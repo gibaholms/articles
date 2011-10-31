@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-fragment xmlns:ser="http://www.bea.com/wli/sb/services" xmlns:tran="http://www.bea.com/wli/sb/transports" xmlns:env="http://www.bea.com/wli/config/env" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config">
+  <ser:coreEntry isProxy="true" isEnabled="true">
+    <ser:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType" xmlns:con="http://www.bea.com/wli/sb/services/bindings/config">
+      <con:wsdl ref="AdvancedValidation/wsdl/OrderService-v1"/>
+      <con:port>
+        <con:name>OrderPort</con:name>
+        <con:namespace>http://gibaholms.wordpress.com/samples/wsdl/Order-v1</con:namespace>
+      </con:port>
+      <con:selector type="SOAP body"/>
+    </ser:binding>
+    <ser:monitoring isEnabled="false">
+      <ser:aggregationInterval>10</ser:aggregationInterval>
+      <ser:pipelineMonitoringLevel>Pipeline</ser:pipelineMonitoringLevel>
+    </ser:monitoring>
+    <ser:reporting>true</ser:reporting>
+    <ser:logging isEnabled="true">
+      <ser:logLevel>debug</ser:logLevel>
+    </ser:logging>
+    <ser:sla-alerting isEnabled="true">
+      <ser:alertLevel>normal</ser:alertLevel>
+    </ser:sla-alerting>
+    <ser:pipeline-alerting isEnabled="true">
+      <ser:alertLevel>normal</ser:alertLevel>
+    </ser:pipeline-alerting>
+    <ser:ws-policy>
+      <ser:binding-mode>wsdl-policy-attachments</ser:binding-mode>
+    </ser:ws-policy>
+  </ser:coreEntry>
+  <ser:endpointConfig>
+    <tran:provider-id>http</tran:provider-id>
+    <tran:inbound>true</tran:inbound>
+    <tran:URI>
+      <env:value>/OrderProxy</env:value>
+    </tran:URI>
+    <tran:inbound-properties/>
+    <tran:all-headers>false</tran:all-headers>
+    <tran:provider-specific>
+      <http:inbound-properties/>
+    </tran:provider-specific>
+  </ser:endpointConfig>
+  <ser:router errorHandler="_onErrorHandler-2594197094438047644--626ac597.1333a9b8080.-7f11">
+    <con:pipeline type="request" name="MainPipeline_request">
+      <con:stage name="ValidateSchema">
+        <con:context>
+          <con2:varNsDecl namespace="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0" prefix="ord"/>
+        </con:context>
+        <con:actions>
+          <con3:validate>
+            <con2:id>_ActionId-2594197094438047644--626ac597.1333a9b8080.-7fc5</con2:id>
+            <con3:wsdl ref="AdvancedValidation/wsdl/OrderService-v1"/>
+            <con3:schemaElement xmlns:ord="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0">ord:OrderRequest</con3:schemaElement>
+            <con3:varName>body</con3:varName>
+            <con3:location>
+              <con2:xpathText>./ord:OrderRequest</con2:xpathText>
+            </con3:location>
+          </con3:validate>
+        </con:actions>
+      </con:stage>
+      <con:stage name="RequestValidation">
+        <con:context>
+          <con2:userNsDecl namespace="http://gibaholms.wordpress.com/samples/xsd/2011/11/validation" prefix="val"/>
+          <con2:varNsDecl namespace="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0" prefix="ord"/>
+        </con:context>
+        <con:actions>
+          <con3:assign varName="validation">
+            <con2:id>_ActionId-2594197094438047644--626ac597.1333a9b8080.-7fa4</con2:id>
+            <con3:expr>
+              <con2:xqueryTransform>
+                <con2:resource ref="AdvancedValidation/xq/RequestValidation"/>
+                <con2:param name="orderRequest">
+                  <con2:path>$body/ord:OrderRequest</con2:path>
+                </con2:param>
+              </con2:xqueryTransform>
+            </con3:expr>
+          </con3:assign>
+          <con3:ifThenElse>
+            <con2:id>_ActionId-2594197094438047644--626ac597.1333a9b8080.-7f5d</con2:id>
+            <con3:case>
+              <con3:condition>
+                <con2:xqueryText>count($validation/val:ValidationErrorList/val:ValidationError) > 0</con2:xqueryText>
+              </con3:condition>
+              <con3:actions>
+                <con3:Error>
+                  <con2:id>_ActionId-2594197094438047644--626ac597.1333a9b8080.-7f12</con2:id>
+                  <con3:errCode>BUS-1</con3:errCode>
+                  <con3:message>Request Validation Error</con3:message>
+                </con3:Error>
+              </con3:actions>
+            </con3:case>
+            <con3:default/>
+          </con3:ifThenElse>
+        </con:actions>
+      </con:stage>
+    </con:pipeline>
+    <con:pipeline type="response" name="MainPipeline_response"/>
+    <con:pipeline type="error" name="_onErrorHandler-2594197094438047644--626ac597.1333a9b8080.-7f11">
+      <con:stage name="HandleFaults">
+        <con:context>
+          <con2:userNsDecl namespace="http://gibaholms.wordpress.com/samples/wsdl/Order-v1.0" prefix="ord"/>
+          <con2:userNsDecl namespace="http://gibaholms.wordpress.com/samples/xsd/2011/11/validation" prefix="val"/>
+        </con:context>
+        <con:actions>
+          <con3:ifThenElse>
+            <con2:id>_ActionId-2594197094438047644--626ac597.1333a9b8080.-7eec</con2:id>
+            <con3:case>
+              <con3:condition>
+                <con2:xqueryText>$fault/ctx:errorCode = 'BEA-382505'</con2:xqueryText>
+              </con3:condition>
+              <con3:actions>
+                <con3:assign varName="body">
+                  <con2:id>_ActionId-5653352863740693100--55318ef1.1333fb9e781.-7f8c</con2:id>
+                  <con3:expr>
+                    <con2:xqueryText><![CDATA[<soap-env:Body>
+	<soap-env:Fault>
+		<faultcode>soap-env:Server</faultcode>
+		<faultstring/>
+		<detail>
+			<ord:OrderTechnicalFault>
+				<ord:message>Schema Validation Failure</ord:message>
+			</ord:OrderTechnicalFault>
+		</detail>
+	</soap-env:Fault>
+</soap-env:Body>]]></con2:xqueryText>
+                  </con3:expr>
+                </con3:assign>
+                <con2:reply isError="true">
+                  <con2:id>_ActionId-5653352863740693100--55318ef1.1333fb9e781.-7ebb</con2:id>
+                </con2:reply>
+              </con3:actions>
+            </con3:case>
+            <con3:case>
+              <con3:condition>
+                <con2:xqueryText>$fault/ctx:errorCode = 'BUS-1'</con2:xqueryText>
+              </con3:condition>
+              <con3:actions>
+                <con3:assign varName="body">
+                  <con2:id>_ActionId-5653352863740693100--55318ef1.1333fb9e781.-7efe</con2:id>
+                  <con3:expr>
+                    <con2:xqueryText><![CDATA[<soap-env:Body>
+	<soap-env:Fault>
+		<faultcode>soap-env:Server</faultcode>
+		<faultstring/>
+		<detail>
+			<ord:OrderBusinessFault>
+				<ord:message>{$validation/val:ValidationErrorList/val:ValidationError[1]/val:message/text()}</ord:message>
+			</ord:OrderBusinessFault>
+		</detail>
+	</soap-env:Fault>
+</soap-env:Body>]]></con2:xqueryText>
+                  </con3:expr>
+                </con3:assign>
+                <con2:reply isError="true">
+                  <con2:id>_ActionId-5653352863740693100--55318ef1.1333fb9e781.-7e9a</con2:id>
+                </con2:reply>
+              </con3:actions>
+            </con3:case>
+            <con3:default>
+              <con3:assign varName="body">
+                <con2:id>_ActionId-5653352863740693100--55318ef1.1333fb9e781.-7f19</con2:id>
+                <con3:expr>
+                  <con2:xqueryText><![CDATA[<soap-env:Body>
+	<soap-env:Fault>
+		<faultcode>soap-env:Server</faultcode>
+		<faultstring/>
+		<detail>
+			<ord:OrderTechnicalFault>
+				<ord:message>SOA Infrastructure Error</ord:message>
+			</ord:OrderTechnicalFault>
+		</detail>
+	</soap-env:Fault>
+</soap-env:Body>]]></con2:xqueryText>
+                </con3:expr>
+              </con3:assign>
+              <con2:reply isError="true">
+                <con2:id>_ActionId-5653352863740693100--55318ef1.1333fb9e781.-7e7f</con2:id>
+              </con2:reply>
+            </con3:default>
+          </con3:ifThenElse>
+        </con:actions>
+      </con:stage>
+    </con:pipeline>
+    <con:flow>
+      <con:pipeline-node name="MainPipeline">
+        <con:request>MainPipeline_request</con:request>
+        <con:response>MainPipeline_response</con:response>
+      </con:pipeline-node>
+      <con:route-node name="RouteToBusiness">
+        <con:context/>
+        <con:actions>
+          <con1:route>
+            <con2:id>_ActionId-2594197094438047644--626ac597.1333a9b8080.-7fe5</con2:id>
+            <con1:service ref="AdvancedValidation/business/OrderBusiness" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+            <con1:operation>execute</con1:operation>
+            <con1:outboundTransform/>
+            <con1:responseTransform/>
+          </con1:route>
+        </con:actions>
+      </con:route-node>
+    </con:flow>
+  </ser:router>
+</xml-fragment>
