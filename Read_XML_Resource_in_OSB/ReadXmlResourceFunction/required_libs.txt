@@ -1,0 +1,6 @@
+Required External Libs in classpath:
+
+<MIDDLEWARE_HOME>\Oracle_OSB1\modules\com.bea.core.xml.xmlbeans_2.1.0.0_2-5-1.jar
+<MIDDLEWARE_HOME>\Oracle_OSB1\modules\com.bea.common.configfwk_1.5.0.0.jar
+<MIDDLEWARE_HOME>\Oracle_OSB1\lib\modules\com.bea.alsb.resources.xml.jar
+<MIDDLEWARE_HOME>\Oracle_OSB1\lib\modules\com.bea.alsb.resources.core.jar

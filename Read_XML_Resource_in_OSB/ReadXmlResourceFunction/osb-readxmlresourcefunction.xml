@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xpf:xpathFunctions xmlns:xpf="http://www.bea.com/wli/sb/xpath/config">
+	<xpf:category id="Custom Functions">
+		<xpf:function>
+			<xpf:name>readXml</xpf:name>
+			<xpf:comment>This function reads a XML Resource file from OSB</xpf:comment>
+			<xpf:namespaceURI>http://gibaholms.wordpress.com/xpath/ReadXmlResource</xpf:namespaceURI>
+			<xpf:className>com.wordpress.gibaholms.xpath.ReadXmlResource</xpf:className>
+			<xpf:method>org.apache.xmlbeans.XmlObject readXml(java.lang.String)</xpf:method>
+			<xpf:isDeterministic>true</xpf:isDeterministic>
+			<xpf:scope>Pipeline</xpf:scope>
+			<xpf:scope>SplitJoin</xpf:scope>
+		</xpf:function>
+	</xpf:category>
+</xpf:xpathFunctions>

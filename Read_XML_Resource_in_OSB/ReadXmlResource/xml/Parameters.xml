@@ -1,0 +1,12 @@
+<ns0:Parameters xmlns:ns0="http://gibaholms.wordpress.com/samples/xsd/2012/02/parameters">
+	<ns0:ParameterList>
+		<ns0:Parameter>
+			<ns0:Key>Color</ns0:Key>
+			<ns0:Value>Blue</ns0:Value>
+		</ns0:Parameter>
+		<ns0:Parameter>
+			<ns0:Key>Size</ns0:Key>
+			<ns0:Value>500</ns0:Value>
+		</ns0:Parameter>
+	</ns0:ParameterList>
+</ns0:Parameters>

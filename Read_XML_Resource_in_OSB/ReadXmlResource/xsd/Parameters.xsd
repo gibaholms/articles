@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://gibaholms.wordpress.com/samples/xsd/2012/02/parameters"
+	xmlns:tns="http://gibaholms.wordpress.com/samples/xsd/2012/02/parameters"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:complexType name="Parameters">
+		<xsd:sequence>
+			<xsd:element name="ParameterList" type="tns:ParameterList"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ParameterList">
+		<xsd:sequence>
+			<xsd:element name="Parameter" type="tns:Parameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Parameter">
+		<xsd:sequence>
+			<xsd:element name="Key" type="xsd:string"/>
+			<xsd:element name="Value" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>
+	
