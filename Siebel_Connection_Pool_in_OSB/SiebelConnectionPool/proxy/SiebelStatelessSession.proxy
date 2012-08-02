@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-fragment xmlns:ser="http://www.bea.com/wli/sb/services" xmlns:tran="http://www.bea.com/wli/sb/transports" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:env="http://www.bea.com/wli/config/env" xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config">
+  <ser:coreEntry isProxy="true" isEnabled="true" isAutoPublish="false">
+    <ser:description/>
+    <ser:binding type="abstract SOAP" isSoap12="false" xsi:type="con4:AnySoapBindingType" xmlns:con4="http://www.bea.com/wli/sb/services/bindings/config"/>
+    <ser:monitoring isEnabled="false">
+      <ser:aggregationInterval>10</ser:aggregationInterval>
+    </ser:monitoring>
+    <ser:reporting>true</ser:reporting>
+    <ser:logging isEnabled="true">
+      <ser:logLevel>debug</ser:logLevel>
+    </ser:logging>
+    <ser:sla-alerting isEnabled="true">
+      <ser:alertLevel>normal</ser:alertLevel>
+    </ser:sla-alerting>
+    <ser:pipeline-alerting isEnabled="true">
+      <ser:alertLevel>normal</ser:alertLevel>
+    </ser:pipeline-alerting>
+    <ser:ws-policy>
+      <ser:binding-mode>service-policy-bindings</ser:binding-mode>
+      <ser:policies/>
+    </ser:ws-policy>
+  </ser:coreEntry>
+  <ser:endpointConfig>
+    <tran:provider-id>local</tran:provider-id>
+    <tran:inbound>true</tran:inbound>
+    <tran:inbound-properties/>
+    <tran:all-headers>true</tran:all-headers>
+  </ser:endpointConfig>
+  <ser:router errorHandler="_onErrorHandler-1349746453640735407--3c4b9ae5.13833c0e2ea.-7b28">
+    <con:pipeline type="request" name="MainPipeline_request">
+      <con:stage name="AssignSiebelAccount">
+        <con:context/>
+        <con:actions>
+          <con6:assign varName="account" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1273047593217338253-2de920e2.13829ddb5f6.-7efe</con7:id>
+            <con6:expr>
+              <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">fn-bea:lookupBasicCredentials('SiebelConnectionPool/sa/SiebelAccount')</con7:xqueryText>
+            </con6:expr>
+          </con6:assign>
+        </con:actions>
+      </con:stage>
+      <con:stage name="GetTokenFromPool">
+        <con5:context xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:userNsDecl namespace="http://www.bea.com/wli/sb/services/security/config" prefix="sec-conf" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+        </con5:context>
+        <con5:actions xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:javaCallout varName="token" xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1273047593217338253-2de920e2.13829ddb5f6.-7efd</con7:id>
+            <con6:archive ref="SiebelConnectionPool/jar/siebel-connection-pool-1.0"/>
+            <con6:className>com.wordpress.gibaholms.TokenPool</con6:className>
+            <con6:method>public static synchronized java.lang.String pollToken(java.lang.String, java.lang.String)</con6:method>
+            <con6:expr>
+              <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">$account/sec-conf:username/text()</con7:xqueryText>
+            </con6:expr>
+            <con6:expr>
+              <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">$account/sec-conf:password/text()</con7:xqueryText>
+            </con6:expr>
+          </con6:javaCallout>
+        </con5:actions>
+      </con:stage>
+      <con:stage name="AssignSiebelHeader">
+        <con5:context xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:userNsDecl namespace="http://www.bea.com/wli/sb/services/security/config" prefix="sec-conf" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+        </con5:context>
+        <con5:actions xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:ifThenElse xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1273047593217338253-2de920e2.13829ddb5f6.-71cf</con7:id>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">empty($token)</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con6:assign varName="header">
+                  <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1273047593217338253-2de920e2.13829ddb5f6.-71ce</con7:id>
+                  <con6:expr>
+                    <con7:xqueryTransform xmlns:con7="http://www.bea.com/wli/sb/stages/config">
+                      <con7:resource ref="SiebelConnectionPool/xq/AssignSiebelHeaderFull"/>
+                      <con7:param name="password">
+                        <con7:path>$account/sec-conf:password/text()</con7:path>
+                      </con7:param>
+                      <con7:param name="username">
+                        <con7:path>$account/sec-conf:username/text()</con7:path>
+                      </con7:param>
+                    </con7:xqueryTransform>
+                  </con6:expr>
+                </con6:assign>
+              </con6:actions>
+            </con6:case>
+            <con6:default>
+              <con6:assign varName="header">
+                <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1273047593217338253-2de920e2.13829ddb5f6.-71cd</con7:id>
+                <con6:expr>
+                  <con7:xqueryTransform xmlns:con7="http://www.bea.com/wli/sb/stages/config">
+                    <con7:resource ref="SiebelConnectionPool/xq/AssignSiebelHeaderToken"/>
+                    <con7:param name="token">
+                      <con7:path>$token</con7:path>
+                    </con7:param>
+                  </con7:xqueryTransform>
+                </con6:expr>
+              </con6:assign>
+            </con6:default>
+          </con6:ifThenElse>
+        </con5:actions>
+      </con:stage>
+      <con:stage name="BackupRequestBody">
+        <con:context/>
+        <con:actions>
+          <con2:assign varName="requestBody">
+            <con1:id>_ActionId-1273047593217338253-2de920e2.13829ddb5f6.-7345</con1:id>
+            <con2:expr>
+              <con1:xqueryText>$body</con1:xqueryText>
+            </con2:expr>
+          </con2:assign>
+        </con:actions>
+      </con:stage>
+    </con:pipeline>
+    <con:pipeline type="response" name="MainPipeline_response">
+      <con:stage name="HandleSiebelReturn">
+        <con5:context xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:userNsDecl namespace="http://www.bea.com/wli/sb/services/security/config" prefix="sec-conf" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+          <con6:userNsDecl namespace="http://siebel.com/webservices" prefix="sieb" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+        </con5:context>
+        <con5:actions xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:ifThenElse xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7c85</con7:id>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">$errorType = 'TokenExpired'</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con6:assign varName="header">
+                  <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7c59</con7:id>
+                  <con6:expr>
+                    <con7:xqueryTransform xmlns:con7="http://www.bea.com/wli/sb/stages/config">
+                      <con7:resource ref="SiebelConnectionPool/xq/AssignSiebelHeaderFull"/>
+                      <con7:param name="password">
+                        <con7:path>$account/sec-conf:password/text()</con7:path>
+                      </con7:param>
+                      <con7:param name="username">
+                        <con7:path>$account/sec-conf:username/text()</con7:path>
+                      </con7:param>
+                    </con7:xqueryTransform>
+                  </con6:expr>
+                </con6:assign>
+                <con2:wsCallout xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7c57</con1:id>
+                  <con2:service xsi:type="ref:BusinessServiceRef" ref="SiebelConnectionPool/business/SiebelSWEBusiness" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                  <con2:request>
+                    <con2:body wrapped="true">$requestBody</con2:body>
+                    <con2:header>$header</con2:header>
+                  </con2:request>
+                  <con2:response>
+                    <con2:body wrapped="true">body</con2:body>
+                    <con2:header>header</con2:header>
+                  </con2:response>
+                  <con2:requestTransform/>
+                  <con2:responseTransform/>
+                </con2:wsCallout>
+                <con2:javaCallout varName="" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7bfb</con1:id>
+                  <con2:archive ref="SiebelConnectionPool/jar/siebel-connection-pool-1.0"/>
+                  <con2:className>com.wordpress.gibaholms.TokenPool</con2:className>
+                  <con2:method>public static synchronized void addToken(java.lang.String, java.lang.String, java.lang.String)</con2:method>
+                  <con2:expr>
+                    <con1:xqueryText>$account/sec-conf:username/text()</con1:xqueryText>
+                  </con2:expr>
+                  <con2:expr>
+                    <con1:xqueryText>$account/sec-conf:password/text()</con1:xqueryText>
+                  </con2:expr>
+                  <con2:expr>
+                    <con1:xqueryText>$header/sieb:SessionToken/text()</con1:xqueryText>
+                  </con2:expr>
+                </con2:javaCallout>
+                <con2:delete varName="header" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7bf9</con1:id>
+                  <con2:location>
+                    <con1:xpathText>.</con1:xpathText>
+                  </con2:location>
+                </con2:delete>
+              </con6:actions>
+            </con6:case>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">$errorType = 'ErrorWithToken'</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con2:javaCallout varName="" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7bbb</con1:id>
+                  <con2:archive ref="SiebelConnectionPool/jar/siebel-connection-pool-1.0"/>
+                  <con2:className>com.wordpress.gibaholms.TokenPool</con2:className>
+                  <con2:method>public static synchronized void addToken(java.lang.String, java.lang.String, java.lang.String)</con2:method>
+                  <con2:expr>
+                    <con1:xqueryText>$account/sec-conf:username/text()</con1:xqueryText>
+                  </con2:expr>
+                  <con2:expr>
+                    <con1:xqueryText>$account/sec-conf:password/text()</con1:xqueryText>
+                  </con2:expr>
+                  <con2:expr>
+                    <con1:xqueryText>$header/sieb:SessionToken/text()</con1:xqueryText>
+                  </con2:expr>
+                </con2:javaCallout>
+                <con2:delete varName="header" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7bb5</con1:id>
+                  <con2:location>
+                    <con1:xpathText>.</con1:xpathText>
+                  </con2:location>
+                </con2:delete>
+                <con7:reply isError="true" xmlns:con7="http://www.bea.com/wli/sb/stages/config">
+                  <con7:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7b9b</con7:id>
+                </con7:reply>
+              </con6:actions>
+            </con6:case>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">$errorType = 'ErrorWithoutToken'</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con7:reply isError="true" xmlns:con7="http://www.bea.com/wli/sb/stages/config">
+                  <con7:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7b29</con7:id>
+                </con7:reply>
+              </con6:actions>
+            </con6:case>
+            <con6:default>
+              <con2:javaCallout varName="" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7b6a</con1:id>
+                <con2:archive ref="SiebelConnectionPool/jar/siebel-connection-pool-1.0"/>
+                <con2:className>com.wordpress.gibaholms.TokenPool</con2:className>
+                <con2:method>public static synchronized void addToken(java.lang.String, java.lang.String, java.lang.String)</con2:method>
+                <con2:expr>
+                  <con1:xqueryText>$account/sec-conf:username/text()</con1:xqueryText>
+                </con2:expr>
+                <con2:expr>
+                  <con1:xqueryText>$account/sec-conf:password/text()</con1:xqueryText>
+                </con2:expr>
+                <con2:expr>
+                  <con1:xqueryText>$header/sieb:SessionToken/text()</con1:xqueryText>
+                </con2:expr>
+              </con2:javaCallout>
+              <con2:delete varName="header" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7b65</con1:id>
+                <con2:location>
+                  <con1:xpathText>.</con1:xpathText>
+                </con2:location>
+              </con2:delete>
+            </con6:default>
+          </con6:ifThenElse>
+        </con5:actions>
+      </con:stage>
+    </con:pipeline>
+    <con:pipeline type="error" name="_onErrorHandler-1349746453640735407--3c4b9ae5.13833c0e2ea.-7de0">
+      <con:stage name="DefineErrorType">
+        <con5:context xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:userNsDecl namespace="http://www.bea.com/wli/sb/services/security/config" prefix="sec-conf" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+          <con6:userNsDecl namespace="http://siebel.com/webservices" prefix="sieb" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+        </con5:context>
+        <con5:actions xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:ifThenElse xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7d71</con7:id>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">contains($body/soap-env:Fault/faultstring/text(), 'Error Code: 10944642')</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con6:assign varName="errorType">
+                  <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7d6f</con7:id>
+                  <con6:expr>
+                    <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">'TokenExpired'</con7:xqueryText>
+                  </con6:expr>
+                </con6:assign>
+              </con6:actions>
+            </con6:case>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">not(empty($header/sieb:SessionToken))</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con6:assign varName="errorType">
+                  <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7c1d</con7:id>
+                  <con6:expr>
+                    <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">'ErrorWithToken'</con7:xqueryText>
+                  </con6:expr>
+                </con6:assign>
+              </con6:actions>
+            </con6:case>
+            <con6:default>
+              <con6:assign varName="errorType">
+                <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7bff</con7:id>
+                <con6:expr>
+                  <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">'ErrorWithoutToken'</con7:xqueryText>
+                </con6:expr>
+              </con6:assign>
+            </con6:default>
+          </con6:ifThenElse>
+          <con6:resume xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+            <con6:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7bfd</con6:id>
+          </con6:resume>
+        </con5:actions>
+      </con:stage>
+    </con:pipeline>
+    <con:pipeline type="error" name="_onErrorHandler-1349746453640735407--3c4b9ae5.13833c0e2ea.-7b28">
+      <con:stage name="HandleSecondAttemptError">
+        <con5:context xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:userNsDecl namespace="http://www.bea.com/wli/sb/services/security/config" prefix="sec-conf" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+          <con6:userNsDecl namespace="http://siebel.com/webservices" prefix="sieb" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+        </con5:context>
+        <con5:actions xmlns:con5="http://www.bea.com/wli/sb/pipeline/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/services/security/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+          <con6:ifThenElse xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7aeb</con7:id>
+            <con6:case>
+              <con6:condition>
+                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">not(empty($header/sieb:SessionToken))</con7:xqueryText>
+              </con6:condition>
+              <con6:actions>
+                <con2:javaCallout varName="" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7ae6</con1:id>
+                  <con2:archive ref="SiebelConnectionPool/jar/siebel-connection-pool-1.0"/>
+                  <con2:className>com.wordpress.gibaholms.TokenPool</con2:className>
+                  <con2:method>public static synchronized void addToken(java.lang.String, java.lang.String, java.lang.String)</con2:method>
+                  <con2:expr>
+                    <con1:xqueryText>$account/sec-conf:username/text()</con1:xqueryText>
+                  </con2:expr>
+                  <con2:expr>
+                    <con1:xqueryText>$account/sec-conf:password/text()</con1:xqueryText>
+                  </con2:expr>
+                  <con2:expr>
+                    <con1:xqueryText>$header/sieb:SessionToken/text()</con1:xqueryText>
+                  </con2:expr>
+                </con2:javaCallout>
+                <con2:delete varName="header" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                  <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7ae5</con1:id>
+                  <con2:location>
+                    <con1:xpathText>.</con1:xpathText>
+                  </con2:location>
+                </con2:delete>
+              </con6:actions>
+            </con6:case>
+            <con6:default></con6:default>
+          </con6:ifThenElse>
+          <con7:reply isError="true" xmlns:con7="http://www.bea.com/wli/sb/stages/config" xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+            <con7:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7ad9</con7:id>
+          </con7:reply>
+        </con5:actions>
+      </con:stage>
+    </con:pipeline>
+    <con:flow>
+      <con:pipeline-node name="MainPipeline">
+        <con:request>MainPipeline_request</con:request>
+        <con:response>MainPipeline_response</con:response>
+      </con:pipeline-node>
+      <con:route-node name="RouteTo_SiebelSWEBusiness" error-handler="_onErrorHandler-1349746453640735407--3c4b9ae5.13833c0e2ea.-7de0">
+        <con:context/>
+        <con:actions>
+          <con3:route>
+            <con1:id>_ActionId-1349746453640735407--3c4b9ae5.13833c0e2ea.-7de1</con1:id>
+            <con3:service ref="SiebelConnectionPool/business/SiebelSWEBusiness" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+            <con3:outboundTransform/>
+            <con3:responseTransform/>
+          </con3:route>
+        </con:actions>
+      </con:route-node>
+    </con:flow>
+  </ser:router>
+</xml-fragment>

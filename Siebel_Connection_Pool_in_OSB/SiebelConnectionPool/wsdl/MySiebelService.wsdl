@@ -1,0 +1,49 @@
+<definitions targetNamespace="http://siebel.com/SiebelAPI" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://siebel.com/SiebelAPI">
+   <types>
+      <xsd:schema elementFormDefault="qualified" attributeFormDefault="unqualified" targetNamespace="http://siebel.com/SiebelAPI">
+         <xsd:element name="MySiebelService_Input">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="ParamIn" type="xsd:string"/>
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+         <xsd:element name="MySiebelService_Output">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="ParamOut" type="xsd:string"/>
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+      </xsd:schema>
+   </types>
+   <message name="MySiebelService_Input">
+      <part name="MySiebelService_Input" element="tns:MySiebelService_Input"/>
+   </message>
+   <message name="MySiebelService_Output">
+      <part name="MySiebelService_Output" element="tns:MySiebelService_Output"/>
+   </message>
+   <portType name="MPLUS_spcMySiebelService_spcTest">
+      <operation name="MySiebelService">
+         <input message="tns:MySiebelService_Input"/>
+         <output message="tns:MySiebelService_Output"/>
+      </operation>
+   </portType>
+   <binding name="MPLUS_spcMySiebelService_spcTest" type="tns:MPLUS_spcMySiebelService_spcTest">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <operation name="MySiebelService">
+         <soap:operation soapAction="document/http://siebel.com/SiebelAPI:MySiebelService"/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+   </binding>
+   <service name="MPLUS_spcMySiebelService_spcTest">
+      <port binding="tns:MPLUS_spcMySiebelService_spcTest" name="MPLUS_spcMySiebelService_spcTest">
+         <soap:address location="https://siebelqa.multiplusfidelidade.com.br/portal_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;WSSOAP=1" />
+      </port>
+   </service>
+</definitions>
